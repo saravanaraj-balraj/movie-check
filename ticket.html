@@ -61,12 +61,12 @@ var timings = d[0].firstElementChild.firstElementChild.firstElementChild.dataset
 
 var parsedTime = JSON.parse(timings)
 if(parsedTime.length){
-  setInterval(()=>  beep(10,100,2000), 1000)
+  setInterval(()=>  beep(60,100,2000), 1000)
   document.getElementById("demo").innerHTML = '********availabe*****'+ c.length
 }else {
   // beep(10,100,500);
   document.getElementById("demo").innerHTML = `======Ticket Not availabe==== ${c.length}`
-  setTimeout(checkticket, 3000)
+  setTimeout(checkticket, 120000)
 };
 }catch{
   clearInterval(timer);

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+ <button id='startButton' onclick="startChecking()">START checking</button><br>
+<a id='urlLink' href="https://www.ticketnew.com/Master-Movie-Tickets-Online-Show-Timings/Online-Advance-Booking/21839/C/Pudukkottai" target="_blank" rel="noopener noreferrer">https://www.ticketnew.com/Master-Movie-Tickets-Online-Show-Timings/Online-Advance-Booking/21839/C/Pudukkottai</a>
+<h2 id="demo"></h2>
+URL: <input type="text" id="myText" value="">
+<button onclick="changeURL()">change url</button>
+<script>
+
+let count = 0;
+let timer;
+function changeurl(e) {
+  count = 0;
+  checkticket();
+  document.getElementById("myText").value = e;
+}
+
+  
+audio=new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+function changeURL(e) {
+  document.getElementById("urlLink").text = document.getElementById("myText").value;
+  checkticket();
+}
+function beep(vol, freq, duration){
+  v=audio.createOscillator()
+  u=audio.createGain()
+  v.connect(u)
+  v.frequency.value=freq
+  v.type="square"
+  u.connect(audio.destination)
+  u.gain.value=vol*0.01
+  v.start(audio.currentTime)
+  v.stop(audio.currentTime+duration*0.001)
+  navigator.vibrate(2000)
+}
+async function checkticket(targetUrl) {
+  count++;
+  var targetUrl = `https://api.ticketnew.com/api?_api_access_key=b1ed36c7bdbe43c1a76d01a6b8ed9c46&_api_name=ticketnew.app.cinema.movieCinema&_api_timestamp=${Date.now()}&_api_version=1.0.0&request=%7B%22appDevice%22%3A1610340515505%2C%22appVersion%22%3A%224.4.8%22%2C%22appPlatform%22%3A%22H5%22%2C%22appEnv%22%3A%22PROD%22%2C%22appChannel%22%3A%22TICKETNEW%22%2C%22sortRule%22%3A%22Default%22%2C%22pageIndex%22%3A1%2C%22pageSize%22%3A10%2C%22regionId%22%3A%22116%22%2C%22movieId%22%3A%2213333%22%2C%22latitude%22%3A0%2C%22longitude%22%3A0%2C%22version%22%3A%222D%22%2C%22language%22%3A%22Tamil%22%7D&_api_signature=qFe2%2BDRpYl3kVLwzf%2BCzd9KqgTI%3D&_api_jsonp_callback=jsonp0`
+  document.getElementById("demo").innerHTML = 'checking...'+ count
+  //var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  let myPromise = new Promise(async function(myResolve, myReject) {
+  var a = await fetch(targetUrl,{method: 'GET',  headers: {
+    'Content-Type': 'application/json',
+
+    mode: 'opaque',
+    "Access-Control-Allow-Origin":'*'
+  },})
+try{
+  var b = await a.json()
+console.log('---',  b)
+
+//var doc = new DOMParser().parseFromString(b, "text/html");
+
+//var c = doc.querySelectorAll('.tn-entity')
+
+//var d = doc.querySelectorAll('.tn-timing-details')
+
+//var timings = d[0].firstElementChild.firstElementChild.firstElementChild.dataset.tkts
+
+var parsedTime = JSON.parse(timings)
+if(parsedTime.length){
+  setInterval(()=>  beep(60,100,2000), 1000)
+  document.getElementById("demo").innerHTML = '********availabe*****'+ c.length
+}else {
+  // beep(10,100,500);
+  document.getElementById("demo").innerHTML = `======Ticket Not availabe==== ${c.length}`
+  setTimeout(checkticket, 10000)
+};
+}catch{
+  clearInterval(timer);
+  document.getElementById("demo").innerHTML = 'Error reload page'
+}
+  });
+
+}
+
+
+function startChecking(){
+  var element = document.getElementById("startButton");
+element.parentNode.removeChild(element);
+checkticket();
+}
+
+
+</script>
+
+</body>
+</html>
